@@ -28,3 +28,17 @@ Selecting a specific item shows you specific information of that item.
 
 
 [http://localhost:8000/catalog.json](http://localhost:8000/catalog.json)
+
+
+
+## Webcasts for the Item Catalog Project
+> Need some additional help getting started with the Item Catalog Project, or simply curious and want to learn a little bit more? Watch the following Webcasts!
+
+> These webcasts are recordings of live Q&A sessions and demos. As always, you should read the appropriate rubric for your project thoroughly before you begin work on any project and double check the rubric before submitting. The videos were made by Udacity's coaches. Think of them as extra supplemental materials.
+
+#### The webcasts for the Item Catalog Project include:
+
+  * Getting Started With the Item Catalog Project and Flask
+  * Flask Templates
+  * Make Your Angular App a Maximum Security Prison
+  * Deploying a Flask App with Heroku
