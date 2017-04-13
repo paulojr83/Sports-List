@@ -36,9 +36,7 @@ Selecting a specific item shows you specific information of that item.
 
 > These webcasts are recordings of live Q&A sessions and demos. As always, you should read the appropriate rubric for your project thoroughly before you begin work on any project and double check the rubric before submitting. The videos were made by Udacity's coaches. Think of them as extra supplemental materials.
 
-#### The webcasts for the Item Catalog Project include:
-
-  * Getting Started With the Item Catalog Project and Flask
-  * Flask Templates
-  * Make Your Angular App a Maximum Security Prison
-  * Deploying a Flask App with Heroku
+#### The webcasts for the Item Catalog Project include:  
+  * [Flask Templates](http://flask.pocoo.org/)
+  * [Make Your App a Maximum Security Prison](https://pythonhosted.org/Flask-Security/)
+  * [Deploying a Flask App with Heroku](https://www.youtube.com/watch?v=pmRT8QQLIqk)
