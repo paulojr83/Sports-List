@@ -37,6 +37,8 @@ class Item(Base):
     title = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
+    history = Column(String(250))
+    origin = Column(String(250))
     cat_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
@@ -47,6 +49,8 @@ class Item(Base):
         return {
             'title': self.title,
             'description': self.description,
+            'history':self.history,
+            'origin':self.origin,
             'id': self.id,
         }
 
