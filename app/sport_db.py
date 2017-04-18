@@ -1,7 +1,8 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+import datetime
 
 Base = declarative_base()
 
@@ -22,6 +23,7 @@ class Category(Base):
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    sport = relationship("Sport", back_populates='category', cascade="all, delete, delete-orphan")
 
     @property
     def serialize(self):
@@ -31,7 +33,7 @@ class Category(Base):
         }
 
 
-class Item(Base):
+class Sport(Base):
     __tablename__ = 'item'
 
     title = Column(String(80), nullable=False)
@@ -39,8 +41,9 @@ class Item(Base):
     description = Column(String(250))
     history = Column(String(250))
     origin = Column(String(250))
+    data_log = Column( DateTime, default=datetime.datetime.now)
     cat_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category)
+    category = relationship(Category, back_populates='sport')
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 

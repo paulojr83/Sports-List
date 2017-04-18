@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class=flash>
+    {% for message in messages %}
+       <div class="alert alert-success" role="alert">
+          <strong>Well done!</strong>{{ message }}
+        </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<div class="card">
+    <div class="card-header">
+        Sport description from category {{sport.category.name}}
+    </div>
+
+    <div class="card-block">
+        <h4 class="card-title">{{sport.title}}</h4>
+        <hr>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Description: {{sport.description}}</li>
+            <li class="list-group-item">History: {{sport.history}}</li>
+            <li class="list-group-item">Origin: {{sport.origin}}</li>
+        </ul>
+    </div>
+
+    <div class="card-footer text-muted" style="display: inherit;">
+        <a class="btn btn-warning" href ="{{url_for('editSportCategory', sport_id = sport.id) }}" >Edit </a><br>
+        <a class="btn btn-outline-success" href = "{{ url_for('home')}}"> Go home </a>
+    </div>
+
+</div>
+{% endblock %}

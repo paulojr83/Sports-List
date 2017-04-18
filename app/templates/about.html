@@ -1,6 +1,16 @@
 {% extends "layout.html" %}
   
 {% block content %}
-  <h2>About</h2>
-  <p>This is an About page for the Intro to Flask article. Don't I look good? Oh stop, you're making me blush.</p>
+
+<div class="card text-center">
+  <div class="card-header">
+    About
+  </div>
+  <div class="card-block">
+    <h4 class="card-title">Catalog project</h4>
+    <p class="card-text">The Item Catalog project consists of developing an application that provides a list of items within a variety of categories, as well as provide a user registration and authentication system.
+    In this sample project, the homepage displays all current categories along with the latest added items.</p>
+    <a class="btn btn-success" href = "{{ url_for('home')}}"> Go home </a>
+  </div>
+</div>
 {% endblock %}

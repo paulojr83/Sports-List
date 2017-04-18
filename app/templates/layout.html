@@ -1,27 +1,51 @@
 <!DOCTYPE html>
 <html>
   <head>
-<title>Flask</title>
-    <strong><link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}"></strong>
+      <meta charset="utf-8">
+      <title>Sport Catalog</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.css') }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.css.map') }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css.map') }}">
+
   </head>
   <body>
-    <header>
-    <div class="container">
-    <h1 class="logo">Flask App</h1>
-        <strong>
-            <nav>
-              <ul class="menu">
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-              </ul>
-            </nav>
-        </strong>
+  <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+              <a  class="nav-link active" href="{{ url_for('home') }}">home</a>
+            </li>
+            <li class="nav-item">
+               <a  class="nav-link" href="{{ url_for('about') }}">About</a>
+            </li>
+            <li class="nav-item">
+              <a  class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Sport Category</h3>
       </div>
-    </header>
+      <hr>
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flash>
+            {% for message in messages %}
+               <div class="alert alert-success" role="alert">
+                  <strong>Well done!</strong>{{ message }}
+                </div>
+            {% endfor %}
+            </ul>
+          {% endif %}
+      {% endwith %}
 
-    <div class="container">
       {% block content %}
       {% endblock %}
-    </div>
+  </div>
   </body>
+    <script src="{{ url_for('static', filename='js/jquery-3.1.1.slim.min.js') }}" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 </html>

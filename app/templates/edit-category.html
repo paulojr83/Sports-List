@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+  
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        Edit category
+    </div>
+
+    <form action="{{url_for('editCategory', category_id= category.id)}}" method = 'POST'>
+    <div class="form-group">
+        <label for="name">Category</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{category.name}}">
+    </div>
+    <div class="card-footer text-muted" style="display: inherit;">
+        <input class="btn btn-info" type="submit" value="Edit Category">
+        <a class="btn btn-warning" href = "{{ url_for('home')}}"> Cancel </a>
+    </div>
+    </form>
+</div>
+
+{% endblock %}
