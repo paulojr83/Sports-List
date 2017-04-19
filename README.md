@@ -22,15 +22,22 @@ Selecting a specific item shows you specific information of that item.
 ![alt text](https://github.com/paulojr83/Sports-List/blob/master/5.PNG "Json")
 [http://localhost:5000/sport/5/edit/](http://localhost:5000/sport/5/edit/) (logged in)
 ### After logging in, a user has the ability to add, update, or delete item info.
-### The application provides a JSON endpoint, at the very least.
 
-![alt text](https://github.com/paulojr83/Sports-List/blob/master/7.PNG "Json")
-[http://localhost:5000/category/catalog.json](http://localhost:5000/category/catalog.json)
+### The application provides a JSON endpoint, all catalog and itens.
+![alt text](https://github.com/paulojr83/Sports-List/blob/master/7.PNG "all catalog and itens")
+[http://localhost:5000/category/catalog/JSON](http://localhost:5000/category/catalog/JSON)
 
+### The application provides a JSON endpoint, catalog and itens by id catalog.
+![alt text](https://github.com/paulojr83/Sports-List/blob/master/9.PNG "Json")
+[http://localhost:5000/category/1/catalog.json](http://localhost:5000/category/1/catalog.json)
 
 
 ## Webcasts for the Item Catalog Project
-> Need some additional help getting started with the Item Catalog Project, or simply curious and want to learn a little bit more? Watch the following Webcasts!
+ Need some additional help getting started with the Item Catalog Project.
+1. Set up the environment database: in your terminal > python sport_db.py 
+ * For more information abou set up [Sqlalchemy](http://docs.sqlalchemy.org/en/latest/core/schema.html)
+
+2. Run the project: in your terminal > python catalog.py access => than [http://localhost:5000/](http://localhost:5000/)
 
 > These webcasts are recordings of live Q&A sessions and demos. As always, you should read the appropriate rubric for your project thoroughly before you begin work on any project and double check the rubric before submitting. The videos were made by Udacity's coaches. Think of them as extra supplemental materials.
 
@@ -38,3 +45,4 @@ Selecting a specific item shows you specific information of that item.
   * [Flask Templates](http://flask.pocoo.org/)
   * [Make Your App a Maximum Security Prison](https://pythonhosted.org/Flask-Security/)
   * [Deploying a Flask App with Heroku](https://www.youtube.com/watch?v=pmRT8QQLIqk)
+  
