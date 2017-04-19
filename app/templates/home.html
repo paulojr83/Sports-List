@@ -24,10 +24,18 @@
         <div class="col-lg-6 ">
             <ul class="list-group">
                 <hr>
-                <li class="list-group-item list-group-item-warning">Latest Items</li>
-                <hr>
+                    <li class="list-group-item list-group-item-warning">Latest Items {% if rows > 0 %} ({{rows}}) <a  class="btn btn-outline-default" href="{{ url_for('home') }}"> - All</a></li>
+                    {%else%}
+                {% if rows == 0 %}
+
+                    <li class="list-group-item list-group-item-danger">No result found</li>
+                {% endif %}
+                    {% endif %}
+
                 {% for sport in sports %}
-                    <a href="{{url_for('detailSport', sport_id = sport.id)}}" class="list-group-item list-group-item-action">{{sport.title}} ({{sport.category.name}})</a>
+                    <li class="list-group-item list-group-item-info">
+                        <a href="{{url_for('detailSport', sport_id = sport.id)}}" class="list-group-item list-group-item-action">{{sport.title}} ({{sport.category.name}})</a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
