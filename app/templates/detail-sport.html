@@ -29,7 +29,7 @@
     </div>
 
     <div class="card-footer text-muted" style="display: inherit;">
-        {% if access == True %}
+        {% if user.id == sport.user_id %}
         <a class="btn btn-warning" href ="{{url_for('editSportCategory', sport_id = sport.id) }}" >Edit </a><br>
         {% endif %}
         <a class="btn btn-outline-success" href = "{{ url_for('home')}}"> Go home </a>

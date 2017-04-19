@@ -5,9 +5,9 @@ from engine import *
 from flask import session as login_session
 import random
 import string
+from functools import wraps
 
-from flask import Flask, render_template, jsonify, request\
-    , flash\
+from flask import Flask, render_template, jsonify, request, g, flash\
     , redirect\
     , url_for
 
@@ -20,27 +20,48 @@ import requests
 
 app = Flask(__name__)
 
+ERROR_PERMISSION = "You don't have permission to do this"
+
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Sport Catalog Application"
 
+def login_permission(id_permission):
+    user_id = getUserID(login_session['email'])
+    if (user_id == id_permission):
+        return user_id
+    else:
+        return None
+
 def login_verified():
     access_token = login_session.get('access_token')
-    if access_token:
-        return True
+    if access_token == None:
+        return None
+    else:
+        user = getUser(login_session['email'])
+        if access_token and user.id:
+            return user
     return False
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in login_session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def home():
     categories = session.query(Category).all()
     sports = session.query(Sport).order_by(Sport.id.desc()).limit(5).all()
-    access = login_verified()
-    return render_template('home.html', categories=categories, sports=sports, rows=-1, access=access)
+    user = login_verified()
+    return render_template('home.html', categories=categories, sports=sports, rows=-1, user=user)
 
 @app.route('/about')
 def about():
-    access = login_verified()
-    return render_template('about.html',access=access)
+    user = login_verified()
+    return render_template('about.html',user=user)
 
 @app.route('/login')
 def login():
@@ -102,8 +123,7 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps('Current user is already connected.'),200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -130,6 +150,11 @@ def gconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
+
+    user_id=getUserID(login_session['email'])
+    if user_id==None:
+        createUser(login_session)
+
     return output
 
 
@@ -168,91 +193,103 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route('/category/new/', methods=['GET', 'POST'])
+@login_required
 def newCategory():
-    if 'username' not in login_session:
-        return redirect('/login')
-    access = login_verified()
+    user = login_verified()
+
     if request.method == 'POST':
+        user_id = getUserID(login_session['email'])
         newCategory = Category(name=request.form['name'])
+        newCategory.user_id =user_id
         session.add(newCategory)
         session.commit()
         flash('A new category add in your catalog!')
         return redirect(url_for('home'))
     else:
-        return render_template('new-category.html', access=access)
+        return render_template('new-category.html', user=user)
+
+
 
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    access = login_verified()
+    user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
-        if category != []:
-            name=request.form['name']
-            category.name=name
-            category.id=category.id
-            session.add(category)
-            session.commit()
-            flash('Category has been edited!')
-        return redirect(url_for('home'))
+        user_id = login_permission(category.user_id)
+        if user_id != None:
+            if category != []:
+                name=request.form['name']
+                category.name=name
+                category.user_id = user_id
+                category.id=category.id
+                session.add(category)
+                session.commit()
+                flash('Category has been edited!')
+            return redirect(url_for('home'))
+        else:
+            flash(ERROR_PERMISSION)
+            return redirect(url_for('home'))
     else:
         category = session.query(Category).filter_by(id=category_id).one();
-        return render_template('edit-category.html', category=category, access=access)
+        return render_template('edit-category.html', category=category, user=user)
 
 
 @app.route('/sport/<int:sport_id>/detail/', methods=['GET'])
 def detailSport(sport_id):
-    access = login_verified()
+    user = login_verified()
     sport = session.query(Sport).filter_by(id=sport_id).one();
-    return render_template('detail-sport.html', sport=sport, access=access)
+    return render_template('detail-sport.html', sport=sport, user=user)
 
 @app.route('/sport/<int:sport_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editSportCategory(sport_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-
     access = login_verified()
     if request.method == 'POST':
         sport = session.query(Sport).filter_by(id=sport_id).one();
-        if sport != []:
-            title = request.form['title']
-            description = request.form['description']
-            history = request.form['history']
-            origin = request.form['origin']
-            cat_id = sport.category.id
-            sport = Sport(title=title, description=description, history=history, origin=origin, cat_id=cat_id)
-            session.add(sport)
-            session.commit()
-            flash('Sport has been edited!')
-        return redirect(url_for('home'))
+        user_id = login_permission(sport.user_id)
+        if user_id != None:
+            if sport != []:
+                title = request.form['title']
+                description = request.form['description']
+                history = request.form['history']
+                origin = request.form['origin']
+                cat_id = sport.category.id
+                sport = Sport(title=title, description=description, history=history, origin=origin, cat_id=cat_id)
+                sport.user_id = user_id
+                session.add(sport)
+                session.commit()
+                flash('Sport has been edited!')
+            return redirect(url_for('home'))
+        else:
+            flash(ERROR_PERMISSION)
+            return redirect(url_for('home'))
     else:
         sport = session.query(Sport).filter_by(id=sport_id).one();
         return render_template('edit-sport.html', sport=sport, access=access)
 
 @app.route('/category/<int:category_id>/item/', methods=['GET'])
 def showSportFromCategory(category_id):
-    access = login_verified()
+    user = login_verified()
     categories = session.query(Category).all()
     sports = session.query(Sport).filter_by(cat_id=category_id).order_by(Sport.id.desc()).all()
     rows = session.query(Sport).filter_by(cat_id=category_id).count()
-    return render_template('home.html', categories=categories, sports=sports, rows=rows, access=access)
+    return render_template('home.html', categories=categories, sports=sports, rows=rows, user=user)
 
 @app.route('/sport/<int:category_id>/item/', methods=['GET', 'POST'])
+@login_required
 def newSportCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    access = login_verified()
+    user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
+        user_id = getUserID(login_session['email'])
         if category != []:
             title = request.form['title']
             description = request.form['description']
             history = request.form['history']
             origin = request.form['origin']
             cat_id = category.id
-
-            sport = Sport(title=title,description=description,history=history,origin=origin,cat_id=cat_id)
+            sport = Sport(title=title,description=description,history=history,origin=origin,cat_id=cat_id, user_id=user_id)
             session.add(sport)
             session.commit()
 
@@ -260,43 +297,62 @@ def newSportCategory(category_id):
         return redirect(url_for('home'))
     else:
         category = session.query(Category).filter_by(id=category_id).one();
-        return render_template('new-sport.html', category=category,access=access)
+        return render_template('new-sport.html', category=category,user=user)
 
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    access = login_verified()
+    user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
-        if category:
-            session.delete(category)
-            session.commit()
-            flash('Category has been deleted!')
+        user_id = login_permission(category.user_id)
+        if user_id != None:
+            if category:
+                session.delete(category)
+                session.commit()
+                flash('Category has been deleted!')
+                return redirect(url_for('home'))
+        else:
+            flash(ERROR_PERMISSION)
             return redirect(url_for('home'))
-
     else:
         category = session.query(Category).filter_by(id=category_id).one();
-        return render_template('delete-category.html',category=category, access=access)
+        return render_template('delete-category.html',category=category, user=user)
 
 @app.route('/sport/<int:sport_id>/delete/', methods=['POST'])
+@login_required
 def deleteSportCategory(sport_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         sport= session.query(Sport).filter_by(id=sport_id).one();
-        if sport:
-            session.delete(sport)
-            session.commit()
-            flash('Sport has been deleted!')
+        user_id = login_permission(sport.user_id)
+        if user_id != None:
+            if sport:
+                session.delete(sport)
+                session.commit()
+                flash('Sport has been deleted!')
+                return redirect(url_for('home'))
+        else:
+            flash(ERROR_PERMISSION)
             return redirect(url_for('home'))
 
-@app.route('/category/catalog.json')
-def catalog():
-    if 'username' not in login_session:
-        return redirect('/login')
+@app.route('/category/catalog/JSON')
+@login_required
+def catalog_all():
     try:
         categories = session.query(Category).all()
+        Categories=[]
+        for category in categories:
+            Categories.append(category.serialize)
+        return jsonify(Categories=Categories)
+
+    except (NoResultFound,MultipleResultsFound):
+        return jsonify(error='No result Found!', code=404)
+
+@app.route('/category/<int:category_id>/catalog/JSON')
+@login_required
+def catalog(category_id):
+    try:
+        categories = session.query(Category).filter_by(id=category_id).all()
         Categories=[]
         for category in categories:
             Categories.append(category.serialize)
@@ -325,7 +381,14 @@ def getUserID(email):
     except:
         return None
 
+def getUser(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user
+    except:
+        return None
+
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='localhost', port=5000)
