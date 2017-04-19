@@ -22,13 +22,14 @@ Selecting a specific item shows you specific information of that item.
 ![alt text](https://github.com/paulojr83/Sports-List/blob/master/5.PNG "Json")
 [http://localhost:5000/sport/5/edit/](http://localhost:5000/sport/5/edit/) (logged in)
 ### After logging in, a user has the ability to add, update, or delete item info.
-### The application provides a JSON endpoint, at the very least.
 
-![alt text](https://github.com/paulojr83/Sports-List/blob/master/7.PNG "Json")
-[http://localhost:5000/category/catalog.json](http://localhost:5000/category/catalog.json)
+### The application provides a JSON endpoint, all catalog and itens.
+![alt text](https://github.com/paulojr83/Sports-List/blob/master/7.PNG "all catalog and itens")
+[http://localhost:5000/category/catalog/JSON](http://localhost:5000/category/catalog/JSON)
 
+### The application provides a JSON endpoint, catalog and itens by id catalog.
 ![alt text](https://github.com/paulojr83/Sports-List/blob/master/9.PNG "Json")
-[http://localhost:5000/category/category_id/catalog.json](http://localhost:5000/category/category_id/catalog.json)
+[http://localhost:5000/category/1/catalog.json](http://localhost:5000/category/1/catalog.json)
 
 
 ## Webcasts for the Item Catalog Project
