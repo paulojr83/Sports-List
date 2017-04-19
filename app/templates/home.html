@@ -5,17 +5,21 @@
     <div class="row marketing ">
         <div class="col-lg-6">
           <h4>Categories</h4>
+            {% if access == True %}
           <a class="btn btn-primary btn-block" href ="{{url_for('newCategory')}}" role="button" >New Category</a>
+            {% endif %}
           <hr>
           <ul class="list-group">
             {% for c in categories %}
             <li class="list-group-item justify-content-between">
               <a href="{{url_for('showSportFromCategory', category_id = c.id)}}" class="card-link">{{c.name}}</a>
+               {% if access == True %}
               <div class="badge-pill" style="display: inherit;">
                 <a class="btn btn-outline-info" href ="{{url_for('newSportCategory', category_id = c.id) }}" >New Sport </a><br>
                 <a class="btn btn-outline-warning" href ="{{url_for('editCategory', category_id = c.id) }}" >Edit </a><br>
                 <a class="btn btn-outline-danger" href ="{{url_for('deleteCategory', category_id = c.id) }}"> Delete </a><br>
               </div>
+                {% endif %}
             </li>
             {% endfor %}
           </ul>
