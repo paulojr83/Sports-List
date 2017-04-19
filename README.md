@@ -27,6 +27,8 @@ Selecting a specific item shows you specific information of that item.
 ![alt text](https://github.com/paulojr83/Sports-List/blob/master/7.PNG "Json")
 [http://localhost:5000/category/catalog.json](http://localhost:5000/category/catalog.json)
 
+![alt text](https://github.com/paulojr83/Sports-List/blob/master/9.PNG "Json")
+[http://localhost:5000/category/category_id/catalog.json](http://localhost:5000/category/category_id/catalog.json)
 
 
 ## Webcasts for the Item Catalog Project
