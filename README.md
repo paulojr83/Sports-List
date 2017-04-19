@@ -32,9 +32,9 @@ Selecting a specific item shows you specific information of that item.
 ## Webcasts for the Item Catalog Project
  Need some additional help getting started with the Item Catalog Project.
 1. Set up the environment database: in your terminal > python sport_db.py 
-* For more information abou set up [Sqlalchemy](http://docs.sqlalchemy.org/en/latest/core/schema.html)
-2. Run the project: in your terminal > python catalog.py access => than [http://localhost:5000/](http://localhost:5000/)
+ * For more information abou set up [Sqlalchemy](http://docs.sqlalchemy.org/en/latest/core/schema.html)
 
+2. Run the project: in your terminal > python catalog.py access => than [http://localhost:5000/](http://localhost:5000/)
 
 > These webcasts are recordings of live Q&A sessions and demos. As always, you should read the appropriate rubric for your project thoroughly before you begin work on any project and double check the rubric before submitting. The videos were made by Udacity's coaches. Think of them as extra supplemental materials.
 
