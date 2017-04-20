@@ -21,12 +21,19 @@ import requests
 app = Flask(__name__)
 
 ERROR_PERMISSION = "You don't have permission to do this"
+MESSAGE_ERROR = 'error'
+MESSAGE_INFO = 'info'
+MESSAGE_WARNING= 'warning'
+MESSAGE_SUCCESS= 'success'
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Sport Catalog Application"
 
 def login_permission(id_permission):
+    """Verified if user has permission to modifiel data
+    :return: user
+    """
     user_id = getUserID(login_session['email'])
     if (user_id == id_permission):
         return user_id
@@ -34,6 +41,7 @@ def login_permission(id_permission):
         return None
 
 def login_verified():
+    """Verified if user is login and then return User"""
     access_token = login_session.get('access_token')
     if access_token == None:
         return None
@@ -44,6 +52,7 @@ def login_verified():
     return False
 
 def login_required(f):
+    """Verified with user is login login_session"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in login_session:
@@ -74,7 +83,7 @@ def login():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-    # Validate state token
+    # Validate state token and connect by google account
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -149,8 +158,11 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("you are now logged in as %s" % login_session['username'], MESSAGE_INFO)
 
+    """
+    Verifild if use has login add on database, with don't create a one
+    """
     user_id=getUserID(login_session['email'])
     if user_id==None:
         createUser(login_session)
@@ -160,6 +172,7 @@ def gconnect():
 
 @app.route('/gdisconnect')
 def logout():
+    """ Validate with has user login and dicconnect from google account"""
     if 'username' in login_session:
         access_token = login_session['access_token']
         print access_token
@@ -179,15 +192,15 @@ def logout():
             del login_session['picture']
             response = make_response(json.dumps('Successfully disconnected.'), 200)
             response.headers['Content-Type'] = 'application/json'
-            flash("you are now disconnected")
+            flash("you are now disconnected", MESSAGE_WARNING)
 
         else:
             response = make_response(json.dumps('Failed to revoke token for given user.', 400))
             response.headers['Content-Type'] = 'application/json'
-            flash("Failed to revoke token for given user")
+            flash("Failed to revoke token for given user", MESSAGE_ERROR)
             return redirect(url_for('home'))
     else:
-        flash("Failed to revoke token for given user")
+        flash("Failed to revoke token for given user", MESSAGE_ERROR)
         return redirect(url_for('home'))
 
     return redirect(url_for('home'))
@@ -195,6 +208,9 @@ def logout():
 @app.route('/category/new/', methods=['GET', 'POST'])
 @login_required
 def newCategory():
+    """
+    Verifild with use has login and able to create a new category
+    """
     user = login_verified()
 
     if request.method == 'POST':
@@ -203,7 +219,7 @@ def newCategory():
         newCategory.user_id =user_id
         session.add(newCategory)
         session.commit()
-        flash('A new category add in your catalog!')
+        flash('A new category add in your catalog!', MESSAGE_SUCCESS)
         return redirect(url_for('home'))
     else:
         return render_template('new-category.html', user=user)
@@ -213,9 +229,13 @@ def newCategory():
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 @login_required
 def editCategory(category_id):
+    """
+    Verifild if user has login and able to create a new category
+    """
     user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
+        # Verifield if user has permission to edit the category
         user_id = login_permission(category.user_id)
         if user_id != None:
             if category != []:
@@ -225,11 +245,11 @@ def editCategory(category_id):
                 category.id=category.id
                 session.add(category)
                 session.commit()
-                flash('Category has been edited!')
+                flash('Category has been edited!', MESSAGE_INFO)
             return redirect(url_for('home'))
         else:
             flash(ERROR_PERMISSION)
-            return redirect(url_for('home'))
+            return redirect(url_for('home', MESSAGE_ERROR))
     else:
         category = session.query(Category).filter_by(id=category_id).one();
         return render_template('edit-category.html', category=category, user=user)
@@ -244,11 +264,16 @@ def detailSport(sport_id):
 @app.route('/sport/<int:sport_id>/edit/', methods=['GET', 'POST'])
 @login_required
 def editSportCategory(sport_id):
+    """
+      Verifild with user has login 
+    """
     access = login_verified()
     if request.method == 'POST':
         sport = session.query(Sport).filter_by(id=sport_id).one();
+        """Verifield if user has permission to edit the item from category"""
         user_id = login_permission(sport.user_id)
         if user_id != None:
+
             if sport != []:
                 title = request.form['title']
                 description = request.form['description']
@@ -259,10 +284,10 @@ def editSportCategory(sport_id):
                 sport.user_id = user_id
                 session.add(sport)
                 session.commit()
-                flash('Sport has been edited!')
+                flash('Sport has been edited!',MESSAGE_WARNING)
             return redirect(url_for('home'))
         else:
-            flash(ERROR_PERMISSION)
+            flash(ERROR_PERMISSION, MESSAGE_ERROR)
             return redirect(url_for('home'))
     else:
         sport = session.query(Sport).filter_by(id=sport_id).one();
@@ -282,6 +307,7 @@ def newSportCategory(category_id):
     user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
+        """Verifield if user has permission to create a new item to category"""
         user_id = getUserID(login_session['email'])
         if category != []:
             title = request.form['title']
@@ -293,7 +319,7 @@ def newSportCategory(category_id):
             session.add(sport)
             session.commit()
 
-            flash('A new sport add in your catalog!')
+            flash('A new sport add in your catalog!', MESSAGE_SUCCESS)
         return redirect(url_for('home'))
     else:
         category = session.query(Category).filter_by(id=category_id).one();
@@ -305,15 +331,16 @@ def deleteCategory(category_id):
     user = login_verified()
     if request.method == 'POST':
         category = session.query(Category).filter_by(id=category_id).one();
+        """Verifield if user has permission to delete category"""
         user_id = login_permission(category.user_id)
         if user_id != None:
             if category:
                 session.delete(category)
                 session.commit()
-                flash('Category has been deleted!')
+                flash('Category has been deleted!', MESSAGE_ERROR)
                 return redirect(url_for('home'))
         else:
-            flash(ERROR_PERMISSION)
+            flash(ERROR_PERMISSION, MESSAGE_ERROR)
             return redirect(url_for('home'))
     else:
         category = session.query(Category).filter_by(id=category_id).one();
@@ -324,20 +351,25 @@ def deleteCategory(category_id):
 def deleteSportCategory(sport_id):
     if request.method == 'POST':
         sport= session.query(Sport).filter_by(id=sport_id).one();
+        """Verifield if user has permission to delete item """
         user_id = login_permission(sport.user_id)
         if user_id != None:
             if sport:
                 session.delete(sport)
                 session.commit()
-                flash('Sport has been deleted!')
+                flash('Sport has been deleted!', MESSAGE_ERROR)
                 return redirect(url_for('home'))
         else:
-            flash(ERROR_PERMISSION)
+            flash(ERROR_PERMISSION, MESSAGE_ERROR)
             return redirect(url_for('home'))
 
 @app.route('/category/catalog/JSON')
 @login_required
 def catalog_all():
+    """
+    Methodo retorn a list with all category and your item 
+    :return json list of catalog: 
+    """
     try:
         categories = session.query(Category).all()
         Categories=[]
@@ -351,6 +383,10 @@ def catalog_all():
 @app.route('/category/<int:category_id>/catalog/JSON')
 @login_required
 def catalog(category_id):
+    """
+    Methodo retorn a list item and you category 
+    :return json list of item: 
+    """
     try:
         categories = session.query(Category).filter_by(id=category_id).all()
         Categories=[]
@@ -362,6 +398,11 @@ def catalog(category_id):
         return jsonify(error='No result Found!', code=404)
 
 def createUser(login_session):
+    """
+    Create a new user
+    :param login_session: 
+    :return user_id: 
+    """
     newUser = User(name=login_session['username']
                    ,email=login_session['email']
                    ,picture=login_session['picture'])
@@ -371,10 +412,20 @@ def createUser(login_session):
     return user.id
 
 def getUserInfo(user_id):
+    """
+    Retorn user by user_id
+    :param user_id: 
+    :return: 
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 def getUserID(email):
+    """
+    Retorn user_id by email
+    :param email: 
+    :return user_id: 
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -382,6 +433,11 @@ def getUserID(email):
         return None
 
 def getUser(email):
+    """
+    Retorn user by email
+    :param email: 
+    :return user: 
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user
