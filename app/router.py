@@ -234,7 +234,7 @@ def editCategory(category_id):
     """
     user = login_verified()
     if request.method == 'POST':
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         # Verifield if user has permission to edit the category
         user_id = login_permission(category.user_id)
         if user_id != None:
@@ -248,17 +248,17 @@ def editCategory(category_id):
                 flash('Category has been edited!', MESSAGE_INFO)
             return redirect(url_for('home'))
         else:
-            flash(ERROR_PERMISSION)
-            return redirect(url_for('home', MESSAGE_ERROR))
+            flash(ERROR_PERMISSION, MESSAGE_ERROR)
+            return redirect(url_for('home'))
     else:
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         return render_template('edit-category.html', category=category, user=user)
 
 
 @app.route('/sport/<int:sport_id>/detail/', methods=['GET'])
 def detailSport(sport_id):
     user = login_verified()
-    sport = session.query(Sport).filter_by(id=sport_id).one();
+    sport = session.query(Sport).filter_by(id=sport_id).one()
     return render_template('detail-sport.html', sport=sport, user=user)
 
 @app.route('/sport/<int:sport_id>/edit/', methods=['GET', 'POST'])
@@ -269,7 +269,7 @@ def editSportCategory(sport_id):
     """
     access = login_verified()
     if request.method == 'POST':
-        sport = session.query(Sport).filter_by(id=sport_id).one();
+        sport = session.query(Sport).filter_by(id=sport_id).one()
         """Verifield if user has permission to edit the item from category"""
         user_id = login_permission(sport.user_id)
         if user_id != None:
@@ -290,7 +290,7 @@ def editSportCategory(sport_id):
             flash(ERROR_PERMISSION, MESSAGE_ERROR)
             return redirect(url_for('home'))
     else:
-        sport = session.query(Sport).filter_by(id=sport_id).one();
+        sport = session.query(Sport).filter_by(id=sport_id).one()
         return render_template('edit-sport.html', sport=sport, access=access)
 
 @app.route('/category/<int:category_id>/item/', methods=['GET'])
@@ -306,7 +306,7 @@ def showSportFromCategory(category_id):
 def newSportCategory(category_id):
     user = login_verified()
     if request.method == 'POST':
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         """Verifield if user has permission to create a new item to category"""
         user_id = getUserID(login_session['email'])
         if category != []:
@@ -322,7 +322,7 @@ def newSportCategory(category_id):
             flash('A new sport add in your catalog!', MESSAGE_SUCCESS)
         return redirect(url_for('home'))
     else:
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         return render_template('new-sport.html', category=category,user=user)
 
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
@@ -330,7 +330,7 @@ def newSportCategory(category_id):
 def deleteCategory(category_id):
     user = login_verified()
     if request.method == 'POST':
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         """Verifield if user has permission to delete category"""
         user_id = login_permission(category.user_id)
         if user_id != None:
@@ -343,14 +343,14 @@ def deleteCategory(category_id):
             flash(ERROR_PERMISSION, MESSAGE_ERROR)
             return redirect(url_for('home'))
     else:
-        category = session.query(Category).filter_by(id=category_id).one();
+        category = session.query(Category).filter_by(id=category_id).one()
         return render_template('delete-category.html',category=category, user=user)
 
 @app.route('/sport/<int:sport_id>/delete/', methods=['POST'])
 @login_required
 def deleteSportCategory(sport_id):
     if request.method == 'POST':
-        sport= session.query(Sport).filter_by(id=sport_id).one();
+        sport= session.query(Sport).filter_by(id=sport_id).one()
         """Verifield if user has permission to delete item """
         user_id = login_permission(sport.user_id)
         if user_id != None:
