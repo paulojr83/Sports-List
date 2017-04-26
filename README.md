@@ -46,3 +46,40 @@ Selecting a specific item shows you specific information of that item.
   * [Make Your App a Maximum Security Prison](https://pythonhosted.org/Flask-Security/)
   * [Deploying a Flask App with Heroku](https://www.youtube.com/watch?v=pmRT8QQLIqk)
   
+#### Dependency
+* antiorm
+* appdirs
+* bcrypt
+* beautifulsoup4
+* bleach
+* cffi
+* click
+* db
+* Flask
+* Flask-HTTPAuth
+* Flask-Login
+* google
+* html5lib
+* httplib2
+* itsdangerous
+* Jinja2
+* MarkupSafe
+* oauth2client
+* packaging
+* passlib
+* pipdeptree
+* psycopg2
+* pyasn1
+* pyasn1-modules
+* pycparser
+* pyparsing
+* redis
+* requests
+* rsa
+* six
+* SQLAlchemy
+* virtualenv
+* webapp2
+* webencodings
+* Werkzeug
+  
